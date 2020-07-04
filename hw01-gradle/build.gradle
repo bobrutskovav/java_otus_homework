@@ -1,0 +1,31 @@
+plugins {
+    // Apply the java plugin to add support for Java
+    id 'java'
+    id 'com.github.johnrengelman.shadow'
+}
+
+group 'ru.otus'
+version 'unspecified'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+
+shadowJar {
+    archiveBaseName.set('hw01-gradle')
+    archiveVersion.set('0.1')
+    archiveClassifier.set('')
+    manifest {
+        attributes 'Main-Class': 'ru.otus.Application'
+    }
+}
+
+tasks.build.dependsOn tasks.shadowJar
