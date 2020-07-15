@@ -6,9 +6,10 @@ public class DiyArrayList<T> implements List<T> {
     private static final String unsupportedOperationMessage = "This operation is not supported.";
     private Object[] elements;
     private int index = 0;
+    private static int defaultCapacity = 10;
 
     public DiyArrayList() {
-        this(10);
+        this(defaultCapacity);
     }
 
     public DiyArrayList(int capacity) {
