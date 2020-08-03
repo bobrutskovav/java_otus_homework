@@ -2,53 +2,53 @@
 
 ### -Xms256m -Xmx256m -XX:+UseG1GC
    
-  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time |Throutput loop  |
+  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time |Throughput  loop  |
   |--------------------|---------------------    |---------------------------|----------------|
   |     17             | 521                     | 328                       |   2            |
   
 ### -Xms256m -Xmx256m -XX:+UseParallelGC
  
-  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time | Throutput loop |
+  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time | Throughput loop |
   |--------------------|---------------------    |---------------------------|----------------|
   |     5              | 1200                    | 1100                      |   1            |
   
   
 ### -Xms2048m -Xmx2048m -XX:+UseG1GC
    
-  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time  |Throutput loop |
+  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time  |Throughput loop |
   |--------------------|---------------------    |---------------------------|----------------|
   |     150            |  19526                  | 11231                     |   99           |
   
   
 ### -Xms2048m -Xmx2048m -XX:+UseParallelGC
  
-  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time | Throutput loop |
+  |GC Usage Times      | Time Before OutOfMemory | Total Stop The World Time | Throughput loop |
   |--------------------|---------------------    |---------------------------|----------------|
   |     39           | 62481                     | 10305                     |  71            |
   
 ### -Xms4096m -Xmx4096m -XX:+UseG1GC
    
-  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time |Throutput loop  |
+  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time |Throughput loop  |
   |--------------------|---------------------     |---------------------------|----------------|
   |     163            |  117488                  | 27238                     |   204          | 
   
   
 ### -Xms4096m -Xmx4096m -XX:+UseParallelGC
  
-  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time | Throutput loop |
+  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time | Throughput loop |
   |--------------------|---------------------     |---------------------------|----------------|
   |     45             | 47586                    | 31617                     |  169           | 
   
 ### -Xms8192m -Xmx8192m -XX:+UseG1GC
    
-  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time  |Throutput loop |
+  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time  |Throughput loop |
   |--------------------|---------------------     |---------------------------|----------------|
   |     184            |  107510                  | 58271                     |   414          | 
   
   
 ### -Xms8192m -Xmx8192m -XX:+UseParallelGC
  
-  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time | Throutput loop |
+  |GC Usage Times      | Time Before OutOfMemory  | Total Stop The World Time | Throughput loop |
   |--------------------|---------------------     |---------------------------|--------------- |
   |     48             | 180599                   | 61946                     |  358           | 
   
@@ -58,3 +58,12 @@
 Но он намного быстрее падает по OutOfMemory. 
 Так же видно, что при использовании Parallel GC приложение останавливается реже, задержка времени выполнения кода - выше, но
 приложение работает дольше до падения в OutOfMemory`
+
+`В моем случае, мне было важно обработать как можно больше проходов по циклу за единицу времени, 
+поэтому для таких задач я выбираю G1GC`
+
+| GcType                    | G1     | Parallel  |
+|---------------------------|--------|-----------|
+| Average time per one loop |  ~0,26 | ~0,50     |
+
+
