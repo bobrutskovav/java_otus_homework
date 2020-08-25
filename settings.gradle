@@ -5,4 +5,5 @@ include 'hw01-gradle'
 include 'hw03-arraylist'
 include 'hw06-testFramework'
 include 'hw08-gc'
+include 'hw10-aop'
 
