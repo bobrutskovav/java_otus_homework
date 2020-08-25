@@ -6,4 +6,5 @@ include 'hw03-arraylist'
 include 'hw06-testFramework'
 include 'hw08-gc'
 include 'hw10-aop'
+include 'hw12-atm'
 
