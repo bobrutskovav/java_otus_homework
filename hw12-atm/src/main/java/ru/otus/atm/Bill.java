@@ -5,12 +5,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public enum Bill {
-    M_5000,
-    M_1000,
-    M_500,
-    M_100,
-    M_50,
-    M_10;
+    M_5000(5000),
+    M_1000(1000),
+    M_500(500),
+    M_100(100),
+    M_50(50),
+    M_10(10);
 
 
     public static final List<Bill> BILLS;
@@ -18,13 +18,13 @@ public enum Bill {
 
     static {
         BILLS = Arrays.asList(Bill.values());
-        BILLS.sort(Comparator.comparingInt(Bill::parseDenominationBill).reversed());
+        BILLS.sort(Comparator.comparingInt(Bill::getDenomination).reversed());
     }
 
     private int denomination;
 
-    Bill() {
-        denomination = parseDenominationBill();
+    Bill(int denomination) {
+        this.denomination = denomination;
     }
 
     public static Bill getMinimalBill() {
@@ -40,7 +40,4 @@ public enum Bill {
         return denomination;
     }
 
-    private int parseDenominationBill() {
-        return Integer.parseInt(this.toString().substring(2));
-    }
 }

@@ -3,20 +3,13 @@ package ru.otus.atm;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ATM {
-
+public class AtmImpl implements Atm {
 
     private CashController cashController;
 
-    public ATM() {
-        cashController = new CashController();
+    public AtmImpl(CashController cashController) {
+        this.cashController = cashController;
     }
-
-    public ATM(Bill... bills) {
-        this();
-        cashController.addBills(bills);
-    }
-
 
     public List<Bill> getMoney(int sum) {
         if (!checkBalance(sum)) {
@@ -42,14 +35,19 @@ public class ATM {
         return monies;
     }
 
-
     public int getBalance() {
-        return cashController.getBalance();
+        return cashController.getTotalSum();
     }
 
+    @Override
+    public void addBills(Bill... bills) {
+        for (Bill bill : bills) {
+            cashController.addBill(bill);
+        }
+    }
 
     private boolean checkBalance(int sum) {
-        int currentBalance = cashController.getBalance();
+        int currentBalance = cashController.getTotalSum();
         return sum <= currentBalance;
     }
 
