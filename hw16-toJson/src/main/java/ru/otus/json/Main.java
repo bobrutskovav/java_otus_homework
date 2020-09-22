@@ -7,10 +7,10 @@ public class Main {
 
 
     public static void main(String[] args) throws IllegalAccessException {
-        HelloTest helloTest = new HelloTest("KekString",
+        HelloTestInteger helloTest = new HelloTestInteger("KekString",
                 123,
                 new String[]{"ArrayStr1", "ArrayStr2"},
-                Arrays.asList("collectionStr1", "collectionStr2"),
+                Arrays.asList("collectionStr1", null),
                 List.of(new String[]{"Array1InCollectionStr1", "Array1InCollectionStr1"}, new String[]{"Array2InCollectionStr1", "Array2InCollectionStr1"}));
 
 
