@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group 'ru.otus'
+version 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    dependencies {
+        implementation 'com.h2database:h2'
+        implementation 'ch.qos.logback:logback-classic'
+        implementation 'org.flywaydb:flyway-core'
+    }
+}

@@ -15,19 +15,15 @@ public class ReflectionEntityClassMetaData<T> implements EntityClassMetaData<T> 
 
     Logger log = LoggerFactory.getLogger(ReflectionEntityClassMetaData.class);
 
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
-    private Field idField;
-    private List<Field> allFields;
-    private List<Field> fieldsWithOutId;
+    private final Field idField;
+    private final List<Field> allFields;
+    private final List<Field> fieldsWithOutId;
     private Constructor<T> constructor;
 
     public ReflectionEntityClassMetaData(Class<T> clazz) {
         this.clazz = clazz;
-        init(clazz);
-    }
-
-    private void init(Class<T> clazz) {
         allFields = ReflectionHelper.getAllFields(clazz);
 
 
@@ -46,6 +42,10 @@ public class ReflectionEntityClassMetaData<T> implements EntityClassMetaData<T> 
         fieldsWithOutId = allFields.stream()
                 .filter(field -> !field.isAnnotationPresent(Id.class))
                 .collect(Collectors.toList());
+    }
+
+    private void init(Class<T> clazz) {
+
     }
 
     @Override

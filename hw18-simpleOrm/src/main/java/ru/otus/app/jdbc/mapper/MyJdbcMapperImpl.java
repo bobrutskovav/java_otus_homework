@@ -9,7 +9,6 @@ import ru.otus.app.jdbc.sessionmanager.SessionManagerJdbc;
 import ru.otus.app.reflection.ReflectionHelper;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
@@ -19,10 +18,10 @@ public class MyJdbcMapperImpl<T> implements JdbcMapper<T> {
 
     private Logger log = LoggerFactory.getLogger(MyJdbcMapperImpl.class);
 
-    private EntitySQLMetaData entitySQLMetaData;
-    private EntityClassMetaData<T> entityClassMetaData;
-    private DbExecutor<T> executor;
-    private SessionManagerJdbc sessionManagerJdbc;
+    private final EntitySQLMetaData entitySQLMetaData;
+    private final EntityClassMetaData<T> entityClassMetaData;
+    private final DbExecutor<T> executor;
+    private final SessionManagerJdbc sessionManagerJdbc;
 
 
     public MyJdbcMapperImpl(Class<T> tClass, SessionManagerJdbc sessionManagerJdbc, DbExecutor<T> dbExecutor) {
@@ -36,16 +35,9 @@ public class MyJdbcMapperImpl<T> implements JdbcMapper<T> {
     public void insert(Object objectData) {
         String sql = entitySQLMetaData.getInsertSql();
         List<Field> fields = entityClassMetaData.getAllFields();
-        List<Object> values = fields.stream().map(field -> {
-            Object value = null;
-            try {
-                field.setAccessible(true);
-                value = field.get(objectData);
-            } catch (IllegalAccessException e) {
-                log.error("Error while access to object", e);
-            }
-            return value;
-        }).collect(Collectors.toList());
+        List<Object> values = fields.stream()
+                .map(field -> ReflectionHelper.getFieldValue(objectData, field))
+                .collect(Collectors.toList());
 
         try {
             long result = executor.executeInsert(sessionManagerJdbc.getCurrentSession().getConnection(), sql, values);
@@ -79,12 +71,10 @@ public class MyJdbcMapperImpl<T> implements JdbcMapper<T> {
                                     return value;
                                 }).collect(Collectors.toList());
 
-
-                                return entityClassMetaData.getConstructor().newInstance(values.toArray(new Object[values.size()]));
-
+                                return ReflectionHelper.instantiate(entityClassMetaData.getConstructor(), values.toArray(new Object[values.size()]));
 
                             }
-                        } catch (SQLException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+                        } catch (SQLException e) {
                             log.error(e.getMessage(), e);
                         }
                         return null;

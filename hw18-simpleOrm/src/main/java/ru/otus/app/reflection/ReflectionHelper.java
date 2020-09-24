@@ -1,7 +1,9 @@
 package ru.otus.app.reflection;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,15 @@ public class ReflectionHelper {
     public static Object getFieldValue(Object object, String name) {
         try {
             Field field = object.getClass().getDeclaredField(name);
+            field.setAccessible(true);
+            return field.get(object);
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
+    public static Object getFieldValue(Object object, Field field) {
+        try {
             field.setAccessible(true);
             return field.get(object);
         } catch (Exception ex) {
@@ -85,6 +96,16 @@ public class ReflectionHelper {
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+
+    public static <T> T instantiate(Constructor<T> constructor, Object... args) {
+        try {
+            return constructor.newInstance(args);
+
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException exception) {
+            throw new RuntimeException(exception);
         }
     }
 
