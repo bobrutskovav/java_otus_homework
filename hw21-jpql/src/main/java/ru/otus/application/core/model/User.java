@@ -28,7 +28,7 @@ public class User {
     @JoinColumn(name = "address_id")
     private AddressDataSet addressDataSet;
 
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<PhoneDataSet> phoneDataSets = new ArrayList<>();
 
 
