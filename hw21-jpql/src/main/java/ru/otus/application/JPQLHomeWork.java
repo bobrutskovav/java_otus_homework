@@ -9,6 +9,8 @@ import ru.otus.application.core.model.AddressDataSet;
 import ru.otus.application.core.model.PhoneDataSet;
 import ru.otus.application.core.model.User;
 import ru.otus.application.core.service.DbServiceUserImpl;
+import ru.otus.application.flyway.MigrationsExecutor;
+import ru.otus.application.flyway.MigrationsExecutorFlyway;
 import ru.otus.application.hibernate.HibernateUtils;
 import ru.otus.application.hibernate.dao.UserDaoHibernate;
 import ru.otus.application.hibernate.sessionmanager.SessionManagerHibernate;
@@ -26,8 +28,8 @@ public class JPQLHomeWork {
     public static void main(String[] args) {
 
 
-        //   MigrationsExecutor migrationsExecutor = new MigrationsExecutorFlyway(HIBERNATE_CFG_FILE);
-        //   migrationsExecutor.executeMigrations();
+        MigrationsExecutor migrationsExecutor = new MigrationsExecutorFlyway(HIBERNATE_CFG_FILE);
+        migrationsExecutor.executeMigrations();
 // Общая часть
 
         SessionFactory sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
