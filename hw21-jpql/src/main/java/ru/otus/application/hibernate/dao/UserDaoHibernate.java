@@ -13,6 +13,8 @@ import ru.otus.application.hibernate.sessionmanager.SessionManagerHibernate;
 import java.util.Optional;
 
 public class UserDaoHibernate implements UserDao {
+
+
     private static Logger logger = LoggerFactory.getLogger(UserDaoHibernate.class);
 
     private final SessionManagerHibernate sessionManager;
@@ -29,6 +31,8 @@ public class UserDaoHibernate implements UserDao {
             return Optional.ofNullable(currentSession.getHibernateSession().find(User.class, id));
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
+        } finally {
+            currentSession.close();
         }
         return Optional.empty();
     }
@@ -44,6 +48,8 @@ public class UserDaoHibernate implements UserDao {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
+        } finally {
+            currentSession.close();
         }
     }
 
@@ -56,6 +62,8 @@ public class UserDaoHibernate implements UserDao {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
+        } finally {
+            currentSession.close();
         }
     }
 
@@ -73,6 +81,8 @@ public class UserDaoHibernate implements UserDao {
         } catch (Exception e) {
             logger.error(e.getMessage(), e);
             throw new UserDaoException(e);
+        } finally {
+            currentSession.close();
         }
     }
 
