@@ -82,6 +82,15 @@ public class CacheHomeWork {
                 () -> logger.info("user was not created")
         );
 
+        user = dbServiceUser.getUser(id);
+
+        user.ifPresentOrElse(
+                crUser -> logger.info("AGAIN FROM CACHE created user, name:{}", crUser.getName()),
+                () -> logger.info("user was not created")
+        );
+
+        cache.removeListener(listener);
+
     }
 
     private static void flywayMigrations(DataSource dataSource) {

@@ -50,7 +50,10 @@ public class DbServiceUserImpl implements DBServiceUser {
             sessionManager.beginSession();
             try {
                 Optional<User> userOptional = userDao.findById(id);
-
+                if (userOptional.isPresent()) {
+                    User user = userOptional.get();
+                    cache.put(String.valueOf(userOptional.get().getId()), user);
+                }
                 logger.info("user: {}", userOptional.orElse(null));
                 return userOptional;
             } catch (Exception e) {
