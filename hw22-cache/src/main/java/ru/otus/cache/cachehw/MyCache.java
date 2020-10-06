@@ -55,19 +55,11 @@ public class MyCache<K, V> implements HwCache<K, V> {
 
     @Override
     public void removeListener(HwListener<K, V> listener) {
-        //Такая конструкция нужна, чтобы удалить то что внутри ВикРефа и сам ВикРеф
-        WeakReference<HwListener<K, V>> foundRef = null;
-        for (WeakReference<HwListener<K, V>> ref : listeners) {
+        listeners.removeIf(ref -> {
             HwListener<K, V> storedListener = ref.get();
-            if (storedListener != null && storedListener.equals(listener)) {
-                ref.clear();
-                foundRef = ref;
-                break;
-            }
-        }
-        if (foundRef != null) {
-            listeners.remove(foundRef);
-        }
+            log.info("Removed listener {}", storedListener);
+            return storedListener != null && storedListener.equals(listener);
+        });
     }
 
 
