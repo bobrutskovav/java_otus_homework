@@ -55,11 +55,11 @@ public class MyCache<K, V> implements HwCache<K, V> {
 
     @Override
     public void removeListener(HwListener<K, V> listener) {
-        listeners.removeIf(ref -> {
+        boolean isRemoved = listeners.removeIf(ref -> {
             HwListener<K, V> storedListener = ref.get();
-            log.info("Removed listener {}", storedListener);
             return storedListener != null && storedListener.equals(listener);
         });
+        if (isRemoved) log.info("Removed Listener!");
     }
 
 
@@ -67,7 +67,12 @@ public class MyCache<K, V> implements HwCache<K, V> {
         listeners.forEach(ref -> {
             HwListener<K, V> listener = ref.get();
             if (listener != null) {
-                listener.notify(key, value, operation);
+                try {
+                    listener.notify(key, value, operation);
+                } catch (Exception exception) {
+                    log.error("Error on listener! {}", listener, exception);
+                }
+
             }
         });
     }
