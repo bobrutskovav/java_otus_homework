@@ -87,6 +87,22 @@ public class DbServiceUserImpl implements DBServiceUser {
         }
     }
 
+    @Override
+    public Optional<User> getUserByName(String name) {
+        try (var sessionManager = userDao.getSessionManager()) {
+            sessionManager.beginSession();
+            try {
+                return userDao.findByName(name);
+            } catch (Exception e) {
+                logger.error(e.getMessage(), e);
+                sessionManager.rollbackSession();
+                return Optional.empty();
+            } finally {
+                sessionManager.close();
+            }
+        }
+    }
+
     public void initDefaultUssrs() {
         User newUser = new User(0, "NotAdmin", 13, "password", false);
         AddressDataSet addressDataSet = new AddressDataSet();

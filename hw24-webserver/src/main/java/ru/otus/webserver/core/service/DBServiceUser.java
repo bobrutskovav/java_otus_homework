@@ -13,5 +13,7 @@ public interface DBServiceUser {
 
     List<User> getAllUsers();
 
+    Optional<User> getUserByName(String name);
+
 
 }

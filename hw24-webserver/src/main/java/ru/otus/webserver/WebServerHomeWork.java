@@ -1,15 +1,11 @@
 package ru.otus.webserver;
 
-import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.flywaydb.core.Flyway;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.otus.webserver.cachehw.HwCache;
 import ru.otus.webserver.cachehw.HwListener;
 import ru.otus.webserver.cachehw.MyCache;
-import ru.otus.webserver.core.dao.UserDao;
 import ru.otus.webserver.core.model.AddressDataSet;
 import ru.otus.webserver.core.model.PhoneDataSet;
 import ru.otus.webserver.core.model.User;
@@ -19,11 +15,8 @@ import ru.otus.webserver.flyway.MigrationsExecutorFlyway;
 import ru.otus.webserver.hibernate.HibernateUtils;
 import ru.otus.webserver.hibernate.dao.UserDaoHibernate;
 import ru.otus.webserver.hibernate.sessionmanager.SessionManagerHibernate;
-import ru.otus.webserver.web.server.UsersWebServer;
 import ru.otus.webserver.web.server.UsersWebServerWithFilterBasedSecurity;
-import ru.otus.webserver.web.services.TemplateProcessor;
 import ru.otus.webserver.web.services.TemplateProcessorImpl;
-import ru.otus.webserver.web.services.UserAuthService;
 import ru.otus.webserver.web.services.UserAuthServiceImpl;
 
 import javax.sql.DataSource;
@@ -43,14 +36,14 @@ public class WebServerHomeWork {
         migrationsExecutor.executeMigrations();
 
 
-        SessionFactory sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
+        var sessionFactory = HibernateUtils.buildSessionFactory(HIBERNATE_CFG_FILE, User.class,
                 AddressDataSet.class, PhoneDataSet.class);
         var sessionManager = new SessionManagerHibernate(sessionFactory);
 
 
-        UserDao userDao = new UserDaoHibernate(sessionManager);
-        HwCache<String, User> cache = new MyCache<>();
-        HwListener listener = new HwListener<String, User>() {
+        var userDao = new UserDaoHibernate(sessionManager);
+        var cache = new MyCache<String, User>();
+        var listener = new HwListener<String, User>() {
             @Override
             public void notify(String key, User value, String action) {
                 logger.info("Action Performed KEY: {} VALUE: {} ACTON: {}", key, value, action);
@@ -59,11 +52,11 @@ public class WebServerHomeWork {
         cache.addListener(listener);
         var dbServiceUser = new DbServiceUserImpl(userDao, cache);
         dbServiceUser.initDefaultUssrs();
-        Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-        TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
-        UserAuthService authService = new UserAuthServiceImpl(userDao);
+        var gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        var templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
+        var authService = new UserAuthServiceImpl(dbServiceUser);
 
-        UsersWebServer usersWebServer = new UsersWebServerWithFilterBasedSecurity(WEB_SERVER_PORT,
+        var usersWebServer = new UsersWebServerWithFilterBasedSecurity(WEB_SERVER_PORT,
                 authService, userDao, gson, templateProcessor, dbServiceUser);
 
         usersWebServer.start();

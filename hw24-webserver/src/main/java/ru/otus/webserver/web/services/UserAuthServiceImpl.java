@@ -1,32 +1,27 @@
 package ru.otus.webserver.web.services;
 
-import ru.otus.webserver.core.dao.UserDao;
-import ru.otus.webserver.core.model.User;
-
-import java.util.Optional;
+import ru.otus.webserver.core.service.DBServiceUser;
 
 public class UserAuthServiceImpl implements UserAuthService {
 
-    private final UserDao userDao;
+    private final DBServiceUser dbServiceUser;
 
-    public UserAuthServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public UserAuthServiceImpl(DBServiceUser userDao) {
+        this.dbServiceUser = userDao;
     }
 
     @Override
     public boolean authenticate(String login, String password) {
-        return userDao.findByName(login)
+        return dbServiceUser.getUserByName(login)
                 .map(user -> user.getPassword().equals(password))
                 .orElse(false);
     }
 
     @Override
     public boolean authenticateAdmin(String login, String password) {
-        Optional<User> user = userDao.findByName(login);
-        if (user.isPresent()) {
-            User u = user.get();
-            return u.getPassword().equals(password) && u.isAdmin();
-        }
-        return false;
+        return dbServiceUser.getUserByName(login)
+                .map(user -> user.getPassword().equals(password) && user.isAdmin())
+                .orElse(false);
+
     }
 }
