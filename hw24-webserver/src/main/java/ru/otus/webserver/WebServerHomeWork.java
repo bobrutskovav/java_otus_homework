@@ -27,7 +27,6 @@ import ru.otus.webserver.web.services.UserAuthService;
 import ru.otus.webserver.web.services.UserAuthServiceImpl;
 
 import javax.sql.DataSource;
-import java.util.List;
 
 
 public class WebServerHomeWork {
@@ -59,22 +58,7 @@ public class WebServerHomeWork {
         };
         cache.addListener(listener);
         var dbServiceUser = new DbServiceUserImpl(userDao, cache);
-        User newUser = new User(0, "NotAdmin", 13, "password", false);
-        AddressDataSet addressDataSet = new AddressDataSet();
-        addressDataSet.setStreet("USER STREET");
-        newUser.setAddressDataSet(addressDataSet);
-        PhoneDataSet phoneA = new PhoneDataSet();
-        phoneA.setUser(newUser);
-        phoneA.setNumber("+700909090");
-        PhoneDataSet phoneB = new PhoneDataSet();
-        phoneB.setUser(newUser);
-        phoneB.setNumber("+99999999");
-        List<PhoneDataSet> userPhones = List.of(phoneA, phoneB);
-        newUser.setPhoneDataSets(userPhones);
-        dbServiceUser.saveUser(newUser);
-
-        User admin = new User(0, "Admin", 13, "password", true);
-        dbServiceUser.saveUser(admin);
+        dbServiceUser.initDefaultUssrs();
         Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
         TemplateProcessor templateProcessor = new TemplateProcessorImpl(TEMPLATES_DIR);
         UserAuthService authService = new UserAuthServiceImpl(userDao);

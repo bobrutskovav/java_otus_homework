@@ -1,5 +1,6 @@
 package ru.otus.webserver.web.servlet;
 
+import ru.otus.webserver.web.ConstantsEndpoints;
 import ru.otus.webserver.web.services.TemplateProcessor;
 import ru.otus.webserver.web.services.UserAuthService;
 
@@ -15,11 +16,12 @@ import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 
 public class LoginServlet extends HttpServlet {
 
-    public static final String ENDPOINT = "/login";
+
     private static final String PARAM_LOGIN = "login";
     private static final String PARAM_PASSWORD = "password";
     private static final int MAX_INACTIVE_INTERVAL = 30;
     private static final String LOGIN_PAGE_TEMPLATE = "login.html";
+    public static final String ADMIN_SESSION_ATTRIBUTE = "isAdmin";
 
 
     private final TemplateProcessor templateProcessor;
@@ -50,12 +52,12 @@ public class LoginServlet extends HttpServlet {
         if (userAuthService.authenticateAdmin(name, password)) {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
-            session.setAttribute("isAdmin", true);
-            response.sendRedirect(AdminServlet.ENDPOINT);
+            session.setAttribute(ADMIN_SESSION_ATTRIBUTE, true);
+            response.sendRedirect(ConstantsEndpoints.ADMIN_ENDPOINT);
         } else if (userAuthService.authenticate(name, password)) {
             HttpSession session = request.getSession();
             session.setMaxInactiveInterval(MAX_INACTIVE_INTERVAL);
-            response.sendRedirect(UsersServlet.ENDPOINT);
+            response.sendRedirect(ConstantsEndpoints.USERS_ENDPOINT);
         } else {
             response.setStatus(SC_UNAUTHORIZED);
         }

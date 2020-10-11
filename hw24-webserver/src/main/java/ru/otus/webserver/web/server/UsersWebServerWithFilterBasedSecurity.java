@@ -10,7 +10,6 @@ import ru.otus.webserver.core.service.DBServiceUser;
 import ru.otus.webserver.web.services.TemplateProcessor;
 import ru.otus.webserver.web.services.UserAuthService;
 import ru.otus.webserver.web.servlet.AdminAuthorizationFilter;
-import ru.otus.webserver.web.servlet.AdminServlet;
 import ru.otus.webserver.web.servlet.AuthorizationFilter;
 import ru.otus.webserver.web.servlet.LoginServlet;
 
@@ -31,8 +30,8 @@ public class UsersWebServerWithFilterBasedSecurity extends UsersWebServerSimple 
 
     @Override
     protected Handler applySecurity(ServletContextHandler servletContextHandler, String... paths) {
-        servletContextHandler.addServlet(new ServletHolder(new LoginServlet(templateProcessor, authService)), LoginServlet.ENDPOINT);
-        servletContextHandler.addFilter(new FilterHolder(new AdminAuthorizationFilter()), AdminServlet.ENDPOINT, null);
+        servletContextHandler.addServlet(new ServletHolder(new LoginServlet(templateProcessor, authService)), "/login");
+        servletContextHandler.addFilter(new FilterHolder(new AdminAuthorizationFilter()), "/adminpage", null);
         AuthorizationFilter authorizationFilter = new AuthorizationFilter();
         Arrays.stream(paths).forEachOrdered(path -> servletContextHandler.addFilter(new FilterHolder(authorizationFilter), path, null));
         return servletContextHandler;

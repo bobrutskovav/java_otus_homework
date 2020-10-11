@@ -3,6 +3,7 @@ package ru.otus.webserver.web.servlet;
 import ru.otus.webserver.core.dto.UserDto;
 import ru.otus.webserver.core.model.User;
 import ru.otus.webserver.core.service.DBServiceUser;
+import ru.otus.webserver.web.ConstantsEndpoints;
 import ru.otus.webserver.web.services.TemplateProcessor;
 
 import javax.servlet.ServletException;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class AdminServlet extends HttpServlet {
 
-    public static final String ENDPOINT = "/adminpage";
+
     private static final String ADMIN_PAGE_TEMPLATE = "adminpage.html";
     private static final String TEMPLATE_ATTR_RANDOM_USER = "users";
     private static final String PARAM_NEW_NAME = "newName";
@@ -51,6 +52,6 @@ public class AdminServlet extends HttpServlet {
         int age = Integer.parseInt(req.getParameter(PARAM_AGE));
         User newUser = new User(0, name, age, password, false);
         dbServiceUser.saveUser(newUser);
-        resp.sendRedirect(AdminServlet.ENDPOINT);//обновить страницу после добавления
+        resp.sendRedirect(ConstantsEndpoints.ADMIN_ENDPOINT);//обновить страницу после добавления
     }
 }

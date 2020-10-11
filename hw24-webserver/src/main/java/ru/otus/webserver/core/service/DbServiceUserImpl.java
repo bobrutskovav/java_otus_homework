@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.otus.webserver.cachehw.HwCache;
 import ru.otus.webserver.core.dao.UserDao;
+import ru.otus.webserver.core.model.AddressDataSet;
+import ru.otus.webserver.core.model.PhoneDataSet;
 import ru.otus.webserver.core.model.User;
 
 import java.util.ArrayList;
@@ -83,5 +85,24 @@ public class DbServiceUserImpl implements DBServiceUser {
                 sessionManager.close();
             }
         }
+    }
+
+    public void initDefaultUssrs() {
+        User newUser = new User(0, "NotAdmin", 13, "password", false);
+        AddressDataSet addressDataSet = new AddressDataSet();
+        addressDataSet.setStreet("USER STREET");
+        newUser.setAddressDataSet(addressDataSet);
+        PhoneDataSet phoneA = new PhoneDataSet();
+        phoneA.setUser(newUser);
+        phoneA.setNumber("+700909090");
+        PhoneDataSet phoneB = new PhoneDataSet();
+        phoneB.setUser(newUser);
+        phoneB.setNumber("+99999999");
+        List<PhoneDataSet> userPhones = List.of(phoneA, phoneB);
+        newUser.setPhoneDataSets(userPhones);
+        saveUser(newUser);
+
+        User admin = new User(0, "Admin", 13, "password", true);
+        saveUser(admin);
     }
 }

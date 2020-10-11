@@ -1,5 +1,7 @@
 package ru.otus.webserver.web.servlet;
 
+import ru.otus.webserver.web.ConstantsEndpoints;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,16 +26,14 @@ public class AdminAuthorizationFilter implements Filter {
         HttpSession session = httpServletRequest.getSession(false);
 
         if (session != null) {
-            if (uri.endsWith(AdminServlet.ENDPOINT)) {
-                boolean isAdmin = Boolean.parseBoolean(String.valueOf(session.getAttribute("isAdmin")));
-                if (!isAdmin) {
-                    httpServletResponse.sendRedirect(LoginServlet.ENDPOINT);
-                } else {
-                    chain.doFilter(httpServletRequest, httpServletResponse);
-                }
+            boolean isAdmin = Boolean.parseBoolean(String.valueOf(session.getAttribute(LoginServlet.ADMIN_SESSION_ATTRIBUTE)));
+            if (!isAdmin) {
+                httpServletResponse.sendRedirect(ConstantsEndpoints.LOGIN_ENDPOINT);
+            } else {
+                chain.doFilter(httpServletRequest, httpServletResponse);
             }
         } else {
-            httpServletResponse.sendRedirect(LoginServlet.ENDPOINT);
+            httpServletResponse.sendRedirect(ConstantsEndpoints.LOGIN_ENDPOINT);
         }
 
     }

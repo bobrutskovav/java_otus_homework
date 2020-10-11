@@ -1,5 +1,7 @@
 package ru.otus.webserver.web.servlet;
 
+import ru.otus.webserver.web.ConstantsEndpoints;
+
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +30,7 @@ public class AuthorizationFilter implements Filter {
         HttpSession session = request.getSession(false);
 
         if (session == null) {
-            response.sendRedirect(LoginServlet.ENDPOINT);
+            response.sendRedirect(ConstantsEndpoints.LOGIN_ENDPOINT);
         } else {
             filterChain.doFilter(servletRequest, servletResponse);
         }

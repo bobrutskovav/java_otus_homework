@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.otus.webserver.core.dao.UserDao;
 import ru.otus.webserver.core.service.DBServiceUser;
+import ru.otus.webserver.web.ConstantsEndpoints;
 import ru.otus.webserver.web.helpers.FileSystemHelper;
 import ru.otus.webserver.web.services.TemplateProcessor;
 import ru.otus.webserver.web.servlet.AdminServlet;
@@ -57,7 +58,7 @@ public class UsersWebServerSimple implements UsersWebServer {
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(resourceHandler);
-        handlers.addHandler(applySecurity(servletContextHandler, UsersServlet.ENDPOINT, UsersApiServlet.ENDPOINT + "/*"));
+        handlers.addHandler(applySecurity(servletContextHandler, "/users", "/api/users/*"));
 
 
         server.setHandler(handlers);
@@ -78,9 +79,9 @@ public class UsersWebServerSimple implements UsersWebServer {
 
     private ServletContextHandler createServletContextHandler() {
         ServletContextHandler servletContextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        servletContextHandler.addServlet(new ServletHolder(new AdminServlet(dbServiceUser, templateProcessor)), AdminServlet.ENDPOINT);
-        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao)), UsersServlet.ENDPOINT);
-        servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson)), UsersApiServlet.ENDPOINT + "/*");
+        servletContextHandler.addServlet(new ServletHolder(new AdminServlet(dbServiceUser, templateProcessor)), ConstantsEndpoints.ADMIN_ENDPOINT);
+        servletContextHandler.addServlet(new ServletHolder(new UsersServlet(templateProcessor, userDao)), ConstantsEndpoints.USERS_ENDPOINT);
+        servletContextHandler.addServlet(new ServletHolder(new UsersApiServlet(userDao, gson)), ConstantsEndpoints.API_ENDPOINT + "/user/*");
         return servletContextHandler;
     }
 }

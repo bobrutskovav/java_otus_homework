@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class UsersServlet extends HttpServlet {
 
-    public static final String ENDPOINT = "/users";
+
     private static final String USERS_PAGE_TEMPLATE = "users.html";
     private static final String TEMPLATE_ATTR_RANDOM_USER = "randomUser";
 
@@ -29,7 +29,9 @@ public class UsersServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse response) throws IOException {
         Map<String, Object> paramsMap = new HashMap<>();
-        UserDto userDto = UserDto.fromUser(userDao.findRandomUser().get());
+        UserDto userDto = userDao.findRandomUser()
+                .map(UserDto::fromUser)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
         paramsMap.put(TEMPLATE_ATTR_RANDOM_USER, userDto);
         response.setContentType("text/html");
         response.getWriter().println(templateProcessor.getPage(USERS_PAGE_TEMPLATE, paramsMap));

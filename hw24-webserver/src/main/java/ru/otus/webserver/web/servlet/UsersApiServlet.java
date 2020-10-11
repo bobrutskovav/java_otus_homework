@@ -14,7 +14,6 @@ import java.io.IOException;
 
 public class UsersApiServlet extends HttpServlet {
 
-    public static final String ENDPOINT = "/api/user";
 
     private static final int ID_PATH_PARAM_POSITION = 1;
 
