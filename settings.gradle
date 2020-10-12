@@ -12,4 +12,6 @@ include 'hw16-toJson'
 include 'hw18-simpleOrm'
 include 'hw21-jpql'
 include 'hw22-cache'
+include 'hw24-webserver'
+include 'hw25-di'
 
