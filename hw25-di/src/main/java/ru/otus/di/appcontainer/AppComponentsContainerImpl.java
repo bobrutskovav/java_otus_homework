@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class AppComponentsContainerImpl implements AppComponentsContainer {
 
@@ -28,27 +29,17 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         if (configClasses.isEmpty()) {
             throw new RuntimeException("Can't find any configuration class in package " + packageName);
         }
-        configClasses.stream()
-                .sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponentsContainerConfig.class).order()))
-                .forEach(this::processConfig);
+        processStreamWithConfigClasses(configClasses.stream());
 
     }
 
     public AppComponentsContainerImpl(Class<?>... initialConfigClasses) {
-        Arrays.stream(initialConfigClasses)
-                .sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponentsContainerConfig.class).order()))
-                .forEach(this::processConfig);
+        processStreamWithConfigClasses(Arrays.stream(initialConfigClasses));
     }
 
     private void processConfig(Class<?> configClass) {
         checkConfigClass(configClass);
-        Object configObject;
-        try {
-            configObject = configClass.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("Can't init configuration class!");
-        }
-
+        Object configObject = initConfigObject(configClass);
         List<Method> appComponentMethods = Arrays.stream(configClass.getDeclaredMethods())
                 .filter(method -> method.isAnnotationPresent(AppComponent.class))
                 .collect(Collectors.toList());
@@ -59,36 +50,24 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
                 .sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponent.class).order()))
                 .forEach(method -> {
                     String componentName = method.getAnnotation(AppComponent.class).name();
-                    if (method.getParameterCount() == 0) {
-                        initNoDependencyComponent(configObject, method, componentName);
-                    } else {
-                        initComponentWithDependency(configObject, method, componentName);
-                    }
+                    initComponent(configObject, method, componentName);
                 });
     }
 
-    private void initComponentWithDependency(Object configObject, Method method, String componentName) {
-        List<Class> parameterTypes = Arrays.stream(method.getParameters())
+    private void initComponent(Object configObject, Method method, String componentName) {
+        Object[] parameters;
+        List<Class<?>> parameterTypes = Arrays.stream(method.getParameters())
                 .map(Parameter::getType)
                 .collect(Collectors.toList());
-        List<Object> readyComponents = parameterTypes.stream().map(type -> appComponents.stream()
-                .filter(type::isInstance)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Can't find ready component with class " + type.getName()))).collect(Collectors.toList());
+        if (parameterTypes.isEmpty()) {
+            parameters = new Object[0];
+        } else {
+            parameters = parameterTypes.stream()
+                    .map(this::getAppComponent).toArray();
+        }
 
-        Object[] parameters = readyComponents.toArray();
         try {
             Object component = method.invoke(configObject, parameters);
-            appComponentsByName.put(componentName, component);
-            appComponents.add(component);
-        } catch (Exception e) {
-            throw new RuntimeException("Can't init AppComponent " + componentName, e);
-        }
-    }
-
-    private void initNoDependencyComponent(Object configObject, Method method, String componentName) {
-        try {
-            Object component = method.invoke(configObject);
             appComponentsByName.put(componentName, component);
             appComponents.add(component);
         } catch (Exception e) {
@@ -102,6 +81,20 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
         }
     }
 
+    private void processStreamWithConfigClasses(Stream<Class<?>> configStream) {
+        configStream
+                .sorted(Comparator.comparingInt(config -> config.getAnnotation(AppComponentsContainerConfig.class).order()))
+                .forEach(this::processConfig);
+    }
+
+    private Object initConfigObject(Class<?> configClass) {
+        try {
+            return configClass.getConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Can't init configuration class!");
+        }
+    }
+
     @Override
     public <C> C getAppComponent(Class<C> componentClass) {
         return (C) appComponents.stream()
@@ -112,6 +105,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
 
     @Override
     public <C> C getAppComponent(String componentName) {
-        return null;
+        if (appComponentsByName.containsKey(componentName)) {
+            return (C) appComponentsByName.get(componentName);
+        } else {
+            throw new RuntimeException("Can't find component for this class " + componentName);
+        }
     }
 }
