@@ -14,4 +14,4 @@ include 'hw21-jpql'
 include 'hw22-cache'
 include 'hw24-webserver'
 include 'hw25-di'
-
+include 'hw26-war'
