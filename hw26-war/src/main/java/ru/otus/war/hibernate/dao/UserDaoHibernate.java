@@ -108,8 +108,13 @@ public class UserDaoHibernate implements UserDao {
     @Override
     public Optional<User> findRandomUser() {
         List<User> allUsers = this.findAllUsers();
-        int index = ThreadLocalRandom.current().nextInt(allUsers.size());
-        return allUsers.isEmpty() ? Optional.empty() : Optional.of(allUsers.get(index));
+        if (allUsers.isEmpty()) {
+            return Optional.empty();
+        } else {
+            int index = ThreadLocalRandom.current().nextInt(allUsers.size());
+            return Optional.ofNullable(allUsers.get(index));
+        }
+
     }
 
     @Override

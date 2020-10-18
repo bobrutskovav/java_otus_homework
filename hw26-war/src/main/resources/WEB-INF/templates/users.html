@@ -1,4 +1,5 @@
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Пользователи</title>
     <script>
@@ -8,8 +9,14 @@
             const id = userIdTextBox.value;
             //fetch('api/user?id=' + id)
             fetch('api/user/' + id)
+                .then(function (response) {
+                    if (!response.ok) {
+                        userDataContainer.innerText = response.status + " user with " + id + " not found";
+                    }
+                    return response;
+                })
                 .then(response => response.json())
-                .then(user => userDataContainer.innerHTML = JSON.stringify(user));
+                .then(user => userDataContainer.innerHTML = JSON.stringify(user))
         }
     </script>
 </head>
@@ -26,15 +33,14 @@
     <tr>
         <td style="width: 50px">Id</td>
         <td style="width: 150px">Имя</td>
-        <td style="width: 100px">Логин</td>
         <td style="width: 100px">Пароль</td>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td>${randomUser.id}</td>
-        <td>${randomUser.name}</td>
-        <td>${randomUser.password}</td>
+    <tr th:object="${randomUser}">
+        <td th:text="${randomUser.id}">1</td>
+        <td th:text="${randomUser.name}">keklolname</td>
+        <td th:text="${randomUser.password}">keklolpass</td>
     </tr>
     </tbody>
 </table>
@@ -51,15 +57,11 @@
         </tr>
         </thead>
         <tbody>
-        <#list users as user>
-
-        <tr th:each="user : ${users}">
-            <td>${user.id}</td>
-            <td>${user.name}</td>
-            <td>${user.password}</td>
+        <tr th:each="user: ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.name}">keklolname</td>
+            <td th:text="${user.password}">keklolpass</td>
         </tr>
-        </tbody>
-        #list>
         </tbody>
     </table>
 </div>

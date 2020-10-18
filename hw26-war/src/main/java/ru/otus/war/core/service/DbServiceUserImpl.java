@@ -9,6 +9,7 @@ import ru.otus.war.core.model.AddressDataSet;
 import ru.otus.war.core.model.PhoneDataSet;
 import ru.otus.war.core.model.User;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,9 +59,9 @@ public class DbServiceUserImpl implements DBServiceUser {
                 Optional<User> userOptional = userDao.findById(id);
                 if (userOptional.isPresent()) {
                     User user = userOptional.get();
+                    logger.info("user: {}", user);
                     cache.put(String.valueOf(userOptional.get().getId()), user);
                 }
-                logger.info("user: {}", userOptional.orElse(null));
                 return userOptional;
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
@@ -122,7 +123,8 @@ public class DbServiceUserImpl implements DBServiceUser {
         }
     }
 
-    public void initDefaultUssrs() {
+    @PostConstruct
+    public void initDefaultUsers() {
         User newUser = new User(0, "NotAdmin", 13, "password", false);
         AddressDataSet addressDataSet = new AddressDataSet();
         addressDataSet.setStreet("USER STREET");

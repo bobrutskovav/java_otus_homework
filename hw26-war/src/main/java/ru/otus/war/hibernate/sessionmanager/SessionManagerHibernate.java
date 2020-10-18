@@ -13,11 +13,11 @@ public class SessionManagerHibernate implements SessionManager {
     private final SessionFactory sessionFactory;
     private DatabaseSessionHibernate databaseSession;
 
-    public SessionManagerHibernate(SessionFactory sessionFactory) {
+    public SessionManagerHibernate(CustomSessionFactory sessionFactory) {
         if (sessionFactory == null) {
             throw new SessionManagerException("SessionFactory is null");
         }
-        this.sessionFactory = sessionFactory;
+        this.sessionFactory = sessionFactory.getFactory();
     }
 
     @Override

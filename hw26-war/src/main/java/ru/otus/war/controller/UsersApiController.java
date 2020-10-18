@@ -7,10 +7,8 @@ import ru.otus.war.controller.exception.UserNotFoundException;
 import ru.otus.war.core.dto.UserDto;
 import ru.otus.war.core.service.DBServiceUser;
 
-import javax.servlet.http.HttpServlet;
-
-@RestController("/api")
-public class UsersApiController extends HttpServlet {
+@RestController
+public class UsersApiController {
 
 
     private final DBServiceUser dbUserService;
@@ -20,10 +18,9 @@ public class UsersApiController extends HttpServlet {
 
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/api/user/{id}")
     protected UserDto getUser(@PathVariable long id) {
         return UserDto.fromUser(dbUserService.getUser(id).orElseThrow(UserNotFoundException::new));
-
 
     }
 
