@@ -22,8 +22,30 @@
 </head>
 
 <body>
+
+<form accept-charset="utf-8" id="create-user-form" th:action="@{/users/create}" th:method="post"
+      th:object="${newUserDto}">
+    <h4>Создать нового пользователя</h4>
+    <label for="newUserName">Имя</label>
+    <input id="newUserName" name="name" placeholder="Введите имя нового пользователя" required th:field="*{name}"
+           type="text"/>
+    <br>
+    <label for="newUserAge">Возраст</label>
+    <input id="newUserAge" name="age" placeholder="Введите возраст нового пользователя" required th:field="*{age}"
+           type="number"/>
+    <br>
+    <label for="newUserPass">Пароль</label>
+    <input id="newUserPass" name="password" placeholder="Введите пароль нового пользователя" required
+           th:field="*{password}"
+           type="password"/>
+    <br>
+    <div class="row">
+        <button type="submit">Создать</button>
+    </div>
+</form>
+
 <h4>Получить пользователя по id</h4>
-<input id="userIdTextBox" placeholder="Введите id пользователя" type="text" value="3">
+<input id="userIdTextBox" placeholder="Введите id пользователя" type="text" value="3"/>
 <button onclick="getUserById()">Получить</button>
 <pre id="userDataContainer"></pre>
 

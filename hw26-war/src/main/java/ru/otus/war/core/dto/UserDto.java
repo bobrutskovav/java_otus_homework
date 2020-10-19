@@ -6,6 +6,8 @@ public class UserDto {
     private long id;
     private String name;
     private String password;
+    private int age;
+
 
     public UserDto(long id, String name, String password) {
         this.id = id;
@@ -18,6 +20,10 @@ public class UserDto {
 
     public static UserDto fromUser(User user) {
         return new UserDto(user.getId(), user.getName(), user.getPassword());
+    }
+
+    public static User toUser(UserDto userDto) {
+        return new User(userDto.getId(), userDto.getName(), userDto.getAge(), userDto.getPassword(), false);
     }
 
     public long getId() {
@@ -42,5 +48,13 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }
