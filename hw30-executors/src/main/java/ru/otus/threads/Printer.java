@@ -2,24 +2,32 @@ package ru.otus.threads;
 
 public class Printer implements Runnable {
 
-    private volatile boolean isFirstThreadRun = false;
+    private static final String THREAD_NAME_PATTERN = "Thread %d";
+    private final int maxThreads;
+    private volatile String nextThreadName;
+
+    public Printer(int maxThreads) {
+        nextThreadName = String.format(THREAD_NAME_PATTERN, 1);
+        this.maxThreads = maxThreads;
+    }
 
 
     public synchronized void performPrint(int number) {
-        if (!Thread.currentThread().getName().endsWith(" 2")) {
-            while (isFirstThreadRun) {
-                waitThread();
-            }
-        }
-        if (!Thread.currentThread().getName().endsWith(" 1")) {
-            while (!isFirstThreadRun) {
+
+
+        if (!Thread.currentThread().getName().equals(nextThreadName)) {
+            while (!nextThreadName.equals(Thread.currentThread().getName())) {
                 waitThread();
             }
         }
         printNumber(number);
-        isFirstThreadRun = !isFirstThreadRun;
+        resolveNextThreadName();
         this.notifyAll();
+    }
 
+    private void resolveNextThreadName() {
+        int currentThreadNumber = Integer.parseInt(Thread.currentThread().getName().substring(7));
+        nextThreadName = String.format(THREAD_NAME_PATTERN, currentThreadNumber % maxThreads == 0 ? 1 : currentThreadNumber + 1);
     }
 
 
@@ -28,7 +36,9 @@ public class Printer implements Runnable {
             // System.out.println(Thread.currentThread().getName() + " wait"); debug sout)
             this.wait();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Thread.currentThread().interrupt();
+            System.out.println(
+                    "Thread was interrupted, Failed to complete operation");
         }
     }
 
@@ -47,4 +57,5 @@ public class Printer implements Runnable {
             performPrint(i);
         }
     }
+
 }
