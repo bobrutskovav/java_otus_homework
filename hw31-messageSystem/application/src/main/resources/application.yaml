@@ -1,0 +1,3 @@
+clientname:
+  frontend: "frontEndService"
+  backend: "databaseService"

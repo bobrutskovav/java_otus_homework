@@ -16,4 +16,5 @@ include 'hw24-webserver'
 include 'hw25-di'
 include 'hw26-war'
 include 'hw30-executors'
-
+include 'hw31-messageSystem:application'
+include 'hw31-messageSystem:MessageSystem'
