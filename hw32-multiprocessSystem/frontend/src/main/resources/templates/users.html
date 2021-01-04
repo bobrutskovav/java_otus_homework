@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Пользователи</title>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script>
+
+        var stompClient = null;
+
+        function setConnected(connected) {
+            $("#connectButton").prop("disabled", connected);
+            $("#disconnectButton").prop("disabled", !connected);
+            if (connected) {
+                $("#conversation").show();
+            } else {
+                $("#conversation").hide();
+            }
+            $("#greetings").html("");
+        }
+
+        function connect() {
+            var socket = new SockJS('/stomp');
+            stompClient = Stomp.over(socket);
+            stompClient.connect({}, function (frame) {
+                setConnected(true);
+                console.log('Connected: ' + frame);
+                stompClient.subscribe('/topic/users', function (allusersdata) {
+                    alert(JSON.stringify(allusersdata.body))
+                });
+
+                stompClient.subscribe('/topic/newUser', function (newUser) {
+                    alert(JSON.stringify(newUser.body))
+                });
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            setConnected(false);
+            console.log("Disconnected");
+        }
+
+
+        function getUserById() {
+            const userIdTextBox = document.getElementById('userIdTextBox');
+            const userDataContainer = document.getElementById('userDataContainer');
+            const id = userIdTextBox.value;
+            //fetch('api/user?id=' + id)
+            fetch('api/user/' + id)
+                .then(function (response) {
+                    if (!response.ok) {
+                        userDataContainer.innerText = response.status + " user with " + id + " not found";
+                    }
+                    return response;
+                })
+                .then(response => response.json())
+                .then(user => userDataContainer.innerHTML = JSON.stringify(user))
+        }
+
+        function createUserWebsocket() {
+            stompClient.send("/app/createuser", {}, JSON.stringify({
+                'name': $("#newUserName").val(),
+                'age': $("newUserAge").val(),
+                'password': $("#newUserPass").val(),
+            }));
+
+        }
+
+        function getAllusersWs() {
+            stompClient.send("/app/getusers");
+        }
+    </script>
+</head>
+
+<body>
+
+<div>
+    <button id="connectButton" onclick="connect()">Connect</button>
+    <br>
+    <button id="disconnectButton" onclick="disconnect()">disconnect</button>
+</div>
+<form accept-charset="utf-8" id="create-user-form" th:action="@{/users/create}" th:method="post"
+      th:object="${newUserDto}">
+    <h4>Создать нового пользователя</h4>
+    <label for="newUserName">Имя</label>
+    <input id="newUserName" name="name" placeholder="Введите имя нового пользователя" required th:field="*{name}"
+           type="text"/>
+    <br>
+    <label for="newUserAge">Возраст</label>
+    <input id="newUserAge" name="age" placeholder="Введите возраст нового пользователя" required th:field="*{age}"
+           type="number"/>
+    <br>
+    <label for="newUserPass">Пароль</label>
+    <input id="newUserPass" name="password" placeholder="Введите пароль нового пользователя" required
+           th:field="*{password}"
+           type="password"/>
+    <br>
+    <div class="row">
+        <button type="submit">Создать</button>
+    </div>
+
+    <div class="row">
+
+    </div>
+</form>
+<div class="row">
+    <button id="createUserWebsocketButton" onclick="createUserWebsocket()">Создать через WebSocket</button>
+</div>
+
+<h4>Получить пользователя по id</h4>
+<input id="userIdTextBox" placeholder="Введите id пользователя" type="text" value="3"/>
+<button onclick="getUserById()">Получить</button>
+<pre id="userDataContainer"></pre>
+
+<h4>Случайный пользователь</h4>
+<table style="width: 400px">
+    <thead>
+    <tr>
+        <td style="width: 50px">Id</td>
+        <td style="width: 150px">Имя</td>
+        <td style="width: 100px">Пароль</td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:object="${randomUser}">
+        <td th:text="${randomUser.id}">1</td>
+        <td th:text="${randomUser.name}">keklolname</td>
+        <td th:text="${randomUser.password}">keklolpass</td>
+    </tr>
+    </tbody>
+</table>
+
+
+<h4>Все пользователи</h4>
+<div>
+    <table style="width: 400px">
+        <thead>
+        <tr>
+            <td style="width: 50px">Id</td>
+            <td style="width: 150px">Имя</td>
+            <td style="width: 100px">Пароль</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user: ${users}">
+            <td th:text="${user.id}">1</td>
+            <td th:text="${user.name}">keklolname</td>
+            <td th:text="${user.password}">keklolpass</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<h4>Все пользователи Websocket</h4>
+<div>
+    <button onclick="getAllusersWs()">Получить всех пользователей WebSocket</button>
+</div>
+</body>
+</html>
