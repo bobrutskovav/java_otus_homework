@@ -1,0 +1,6 @@
+mysocket:
+  clientName: "FRONT_END_SOCKET_CLIENT"
+  clientPort: 8192
+  messageSystem:
+    host: "localhost"
+    port: 8190
