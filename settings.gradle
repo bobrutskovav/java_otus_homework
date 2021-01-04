@@ -21,6 +21,5 @@ include 'hw31-messageSystem:MessageSystem'
 include 'hw32-multiprocessSystem:frontend'
 include 'hw32-multiprocessSystem:backend'
 include 'hw32-multiprocessSystem:messageSystem'
-include 'hw32-multiprocessSystem:socketMessageSystemClient'
 
 
